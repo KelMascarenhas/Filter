@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ff3b3f"/><stop offset=".55" stop-color="#ff4fc8"/><stop offset="1" stop-color="#8e5cff"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="url(#g)"/><path d="M20 15h27v8H30v8h14v8H30v14H20z" fill="white"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="pink" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#ff3f9f"/>
+      <stop offset="1" stop-color="#ff2d55"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#00ff8a"/>
+      <stop offset="1" stop-color="#00c2a8"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#030405"/>
+  <path d="M0 16A16 16 0 0 1 16 0h22L0 38Z" fill="url(#pink)"/>
+  <path d="M64 46A18 18 0 0 1 46 64H20l44-44Z" fill="url(#green)" opacity=".92"/>
+  <rect x="8" y="8" width="48" height="48" rx="12" fill="#050607" opacity=".88"/>
+  <text x="32" y="38" fill="#fff" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" font-weight="700" text-anchor="middle">filtr</text>
+</svg>

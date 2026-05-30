@@ -1,19 +1,34 @@
-# Filtr / Filter — Portal + Studio Mock MVP
+# FILTR — Experiência + Estúdio Mock MVP
 
-Protótipo navegável para apresentação do ecossistema **Filtr**: portal público de notícias, produtos, radar de artistas, login simulado, Studio interno, distribuição e Academy.
+Protótipo navegável para apresentação da **Experiência FILTR**: portal público de notícias, clipes, playlists, entrevistas, palcos e Estúdio interno para perfis, parceiros e lançamento de produto.
 
-> Status: **mockado para apresentação**. Não usa banco de dados, autenticação real ou integrações externas.
+> Status: **100% mockado para apresentação**. Não usa banco de dados, autenticação real, upload real ou integrações externas.
+
+## Escopo desta versão
+
+Esta primeira versão é somente uma experiência navegável dentro do Estúdio FILTR para simular o CMS de lançamento musical da Piúca/FILTR.
+
+Não implementa:
+
+- Supabase real.
+- SFTP real.
+- Upload real.
+- Integração Sony real.
+- DDEX real.
+
+O produto precisa parecer operacional, mas todos os dados, botões, status, validações e entregas são mockados/localizados no front-end.
 
 ## O que está incluído
 
-- **Portal público** com hero, busca mockada, notícias e destaques.
+- **Portal público** com hero editorial, Produtos FILTR, Agora para descobrir, entrevista da semana e newsletter.
+- **Apresentação comercial interativa** da FILTR Experience para Sony/Som Livre, em PT/EN.
+- **Simulação navegável da FILTR Experience** com dashboard, diagnóstico, Release Hub, Release Score, Academy, Opportunities, Media Network, Intelligence, Local Labels e A&R Radar.
 - **Notícias** com páginas de detalhe simuladas.
 - **Radar de artistas** com score de relevância, crescimento e insights fictícios.
-- **Produtos Filtr**: Distribution, Academy, Intelligence, Live, Playlists e Creator Services.
-- **Login fake** levando direto ao Studio.
-- **Studio interno** com dashboard operacional.
-- **Distribuição** com esteira de 7 etapas, checklist e fila de lançamentos.
-- **Academy** com trilhas, progresso e certificado mockado.
+- **Produtos FILTR públicos**: Canal, Clipes, Playlists, Entrevistas e Palcos FILTR.
+- **Entrar** levando direto ao Estúdio FILTR.
+- **Estúdio interno** com dashboard operacional, perfis de artistas, parceiros/selos e catálogo.
+- **Lançamento de produto** com esteira mockada: capa, áudios, metadados, direitos, lojas, pacote, exports e simulação de entrega.
 
 ## Como rodar localmente
 
@@ -21,13 +36,13 @@ Sem instalar dependências:
 
 ```bash
 cd filter-mock
-python3 -m http.server 5173
+python3 -m http.server 5175
 ```
 
 Depois abra:
 
 ```text
-http://localhost:5173
+http://localhost:5175
 ```
 
 Também dá para abrir o `index.html` diretamente no navegador, mas o servidor local é melhor para simular deploy.
@@ -39,28 +54,44 @@ Com GitHub CLI autenticado:
 ```bash
 git init
 git add .
-git commit -m "Initial mock MVP for Filtr portal and studio"
-gh repo create Filter --private --source=. --remote=origin --push
+git commit -m "Initial mock MVP for FILTR portal and studio"
+gh repo create FILTR --private --source=. --remote=origin --push
 ```
 
 Se quiser público para facilitar deploy rápido:
 
 ```bash
-gh repo create Filter --public --source=. --remote=origin --push
+gh repo create FILTR --public --source=. --remote=origin --push
 ```
 
 ## Como publicar na Vercel
 
-1. Suba o projeto para um repositório no GitHub chamado `Filter`.
+1. Suba o projeto para um repositório no GitHub chamado `FILTR`.
 2. Acesse o dashboard da Vercel.
 3. Clique em **New Project**.
-4. Importe o repositório `Filter`.
+4. Importe o repositório `FILTR`.
 5. Framework preset: **Other** ou **Static**.
 6. Build command: deixe vazio.
 7. Output directory: deixe vazio ou use a raiz.
 8. Clique em **Deploy**.
 
 A Vercel vai gerar uma URL temporária `*.vercel.app` para você abrir durante a apresentação.
+
+## Como publicar no GitHub Pages
+
+Este mock é estático e usa rotas com `#/`, então pode ser publicado direto pelo GitHub Pages sem build.
+
+Configuração recomendada:
+
+- Source: `Deploy from a branch`.
+- Branch: `main`.
+- Folder: `/`.
+
+Depois da publicação, a URL pública fica no formato:
+
+```text
+https://kelmascarenhas.github.io/Filter/
+```
 
 ## Estrutura
 
@@ -90,21 +121,19 @@ filter-mock/
 Como é uma aplicação estática, as rotas usam hash:
 
 - `#/` — Portal
+- `#/pitch/1` a `#/pitch/16` — Pitch navegável FILTR Experience
+- `#/experience` — Simulação navegável FILTR Experience
+- `#/experience/ar-radar` — Exemplo de módulo da simulação
 - `#/noticias` — Notícias
 - `#/noticias/hub-distribuicao-filtr` — Exemplo de notícia
 - `#/artistas` — Radar de artistas
 - `#/produtos` — Produtos
-- `#/login` — Login simulado
-- `#/studio` — Dashboard do Studio
-- `#/studio/distribuicao` — Processo de distribuição
-- `#/studio/academy` — Academy
+- `#/login` — Acesso simulado ao Estúdio
+- `#/studio` — Dashboard operacional
+- `#/studio/perfis` — Perfis de artistas e parceiros
+- `#/studio/lancamento` — Lançamento de produto
+- `#/studio/catalogo` — Catálogo do workspace
 
-## Quando evoluir para produto real
+## Fora do escopo técnico
 
-Fase seguinte recomendada:
-
-1. Migrar para **Next.js**.
-2. Adicionar autenticação real.
-3. Definir banco: Supabase/Postgres ou outro.
-4. Criar modelos para artistas, produtos, lançamentos, cursos, usuários e permissões.
-5. Integrar uploads de assets, metadados e workflow real de distribuição.
+Esta versão não deve abrir conexão, gravar arquivo, transmitir pacote, gerar DDEX real ou acessar serviços externos. Qualquer evolução técnica futura deve ser tratada em outro ciclo.
