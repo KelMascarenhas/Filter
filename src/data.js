@@ -213,6 +213,69 @@ window.FILTR_DATA = {
     { label: "Aprovar capa do produto Noite Solar", status: "Concluído", due: "Ontem" },
     { label: "Completar splits de Casa Brava", status: "Pendente", due: "2 dias" }
   ],
+  techSlides: [
+    {
+      badge: { pt: "Apresentação Técnica", en: "Technical Presentation" },
+      title: { pt: "FILTR — Tech & Operação", en: "FILTR — Tech & Operations" },
+      subtitle: { pt: "Como operar a FILTR como selo automatizado conectado ao supply chain da Sony.", en: "How to operate FILTR as an automated label connected to Sony's supply chain." },
+      body: { pt: "Uma proposta técnica e executiva para preparar catálogo, validar dados, enviar pacotes de entrega e receber relatórios de volta no CMS FILTR.", en: "A technical and executive proposal to prepare catalog, validate data, send delivery packages and receive reports back into the FILTR CMS." },
+      quote: { pt: "A FILTR prepara, valida e automatiza. A Sony distribui, governa e reporta.", en: "FILTR prepares, validates and automates. Sony distributes, governs and reports." },
+      visual: "cover",
+      tags: [
+        { pt: "CMS próprio", en: "Own CMS" },
+        { pt: "Integração Sony", en: "Sony integration" },
+        { pt: "Dados de vendas e financeiro", en: "Sales and finance data" }
+      ]
+    },
+    {
+      badge: { pt: "Estrutura", en: "Structure" },
+      title: { pt: "Por que este modelo", en: "Why this model" },
+      subtitle: { pt: "FILTR como selo automatizado Sony, não como nova distribuidora.", en: "FILTR as an automated Sony label, not a new distributor." },
+      body: { pt: "O objetivo não é duplicar contratos, compliance, financeiro ou relacionamento com plataformas. A FILTR cria uma camada de CMS, curadoria, validação e inteligência operacional sobre a estrutura que a Sony já domina.", en: "The goal is not to duplicate contracts, compliance, finance or platform relationships. FILTR creates a CMS, curation, validation and operational intelligence layer on top of Sony's existing structure." },
+      quote: { pt: "Menos complexidade para operar. Mais controle para escalar.", en: "Less complexity to operate. More control to scale." },
+      visual: "model"
+    },
+    {
+      badge: { pt: "Fluxo técnico", en: "Technical Flow" },
+      title: { pt: "Arquitetura da conexão", en: "Connection architecture" },
+      subtitle: { pt: "CMS FILTR → Sony → DSPs, com retorno de dados para o CMS.", en: "FILTR CMS → Sony → DSPs, with data returning to the CMS." },
+      body: { pt: "A FILTR envia catálogo estruturado para a Sony. A Sony distribui para DSPs e devolve status, vendas, consumo, financeiro e royalties em CSV, XLS ou API.", en: "FILTR sends structured catalog to Sony. Sony distributes to DSPs and returns status, sales, consumption, finance and royalties through CSV, XLS or API." },
+      quote: { pt: "A conexão ideal é de mão dupla: entrega e inteligência voltam para o mesmo ambiente.", en: "The ideal connection is two-way: delivery and intelligence return to the same environment." },
+      visual: "connection"
+    },
+    {
+      badge: { pt: "Operação", en: "Operation" },
+      title: { pt: "Responsabilidades e integração", en: "Responsibilities and integration" },
+      subtitle: { pt: "O que fica com a FILTR e o que permanece com a Sony.", en: "What stays with FILTR and what remains with Sony." },
+      body: { pt: "A FILTR organiza o fluxo de cadastro, assets e validação. A Sony mantém distribuição, contratos com DSPs, governança, compliance, financeiro e relatórios oficiais.", en: "FILTR organizes registration, assets and validation flows. Sony keeps distribution, DSP contracts, governance, compliance, finance and official reports." },
+      quote: { pt: "A FILTR prepara, valida e automatiza. A Sony distribui, governa e reporta.", en: "FILTR prepares, validates and automates. Sony distributes, governs and reports." },
+      visual: "responsibilities"
+    },
+    {
+      badge: { pt: "Dependências", en: "Dependencies" },
+      title: { pt: "O que a Sony precisa fornecer", en: "What Sony needs to provide" },
+      subtitle: { pt: "Duas definições destravam o piloto: como a FILTR entrega e como a Sony retorna informação.", en: "Two definitions unlock the pilot: how FILTR delivers and how Sony returns information." },
+      body: { pt: "A Sony define o formato técnico, credenciais, campos obrigatórios, regras de validação, status de entrega e modelo de relatórios comerciais e financeiros.", en: "Sony defines the technical format, credentials, required fields, validation rules, delivery status and commercial and financial reporting model." },
+      quote: { pt: "A Sony não precisa reconstruir nada: apenas definir a porta de entrada e o formato de retorno.", en: "Sony does not need to rebuild anything: only define the entry point and the return format." },
+      visual: "dependencies"
+    },
+    {
+      badge: { pt: "Dados e relatórios", en: "Data and reports" },
+      title: { pt: "Retorno da Sony para o CMS FILTR", en: "Sony return to the FILTR CMS" },
+      subtitle: { pt: "Status, vendas, consumo, relatórios financeiros, royalties e dashboards.", en: "Status, sales, consumption, financial reports, royalties and dashboards." },
+      body: { pt: "O CMS FILTR deixa de ser apenas cadastro e passa a ser painel de gestão do selo: evolução por DSP, consumo por território, status de ingestão e visão financeira.", en: "The FILTR CMS stops being only registration and becomes a label management dashboard: DSP evolution, territory consumption, ingestion status and financial view." },
+      quote: { pt: "A informação que volta fecha o ciclo operacional e transforma entrega em gestão.", en: "The information coming back closes the operational loop and turns delivery into management." },
+      visual: "returns"
+    },
+    {
+      badge: { pt: "Resumo", en: "Summary" },
+      title: { pt: "Benefícios executivos", en: "Executive benefits" },
+      subtitle: { pt: "Economia, governança e escala sem criar uma nova distribuidora.", en: "Efficiency, governance and scale without creating a new distributor." },
+      body: { pt: "A proposta é operar um selo com inteligência de dados, usando a supply chain existente da Sony e reduzindo custo, tempo e complexidade técnica.", en: "The proposal is to operate a data-driven label using Sony's existing supply chain while reducing cost, time and technical complexity." },
+      quote: { pt: "A FILTR envia catálogo estruturado. A Sony retorna status, vendas e financeiro. O CMS vira gestão.", en: "FILTR sends structured catalog. Sony returns status, sales and finance. The CMS becomes management." },
+      visual: "summary"
+    }
+  ],
   pitchSlides: [
     {
       kicker: { pt: "Abertura institucional", en: "Institutional opening" },

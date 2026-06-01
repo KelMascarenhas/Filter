@@ -352,6 +352,7 @@ function copy(value) {
 const routes = [
   { path: "/", label: "Portal", render: renderHome },
   { path: "/pitch", label: "Pitch", render: renderPitchDeck },
+  { path: "/tech", label: "Tech & Operação", render: renderTechDeck },
   { path: "/noticias", label: "Notícias", render: renderNews },
   { path: "/lancamentos", label: "Lançamentos", render: renderHome },
   { path: "/entrevistas", label: "Entrevistas", render: renderHome },
@@ -418,6 +419,7 @@ function shell(content, options = {}) {
       </nav>
       <div class="header-actions" aria-label="Ações do cabeçalho">
         <a class="presentation-link ${active("/pitch")}" href="#/pitch/1">${t("Apresentação")}</a>
+        <a class="presentation-link tech-link ${active("/tech")}" href="#/tech/1">Tech & Operação</a>
         <button class="language-toggle" type="button" data-language-toggle aria-label="Alternar idioma">
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
@@ -1983,6 +1985,430 @@ function renderPitchDeck() {
   `);
 }
 
+function techIndexFromRoute() {
+  const raw = Number(routePath().split("/tech/")[1] || 1);
+  return Math.min(Math.max(raw || 1, 1), data.techSlides.length);
+}
+
+function techIcon(name) {
+  const paths = {
+    cms: `<path d="M4 5h16v10H4z" /><path d="M9 19h6M12 15v4" />`,
+    check: `<path d="M20 6 9 17l-5-5" />`,
+    package: `<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" /><path d="m4.5 7.7 7.5 4.2 7.5-4.2M12 12v8.6" />`,
+    globe: `<path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" /><path d="M3.6 9h16.8M3.6 15h16.8M12 3c2.2 2.2 3.4 5.2 3.4 9s-1.2 6.8-3.4 9M12 3c-2.2 2.2-3.4 5.2-3.4 9s1.2 6.8 3.4 9" />`,
+    chart: `<path d="M5 19V9M12 19V5M19 19v-7" /><path d="M4 19h16" />`,
+    file: `<path d="M7 3h7l4 4v14H7z" /><path d="M14 3v5h5M9.5 13h5M9.5 17h5" />`,
+    shield: `<path d="M12 3 20 6v6c0 4.6-3.1 7.6-8 9-4.9-1.4-8-4.4-8-9V6l8-3Z" /><path d="M8.5 12.2 11 14.8l4.8-5.3" />`,
+    link: `<path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1" /><path d="M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1l1.1-1.1" />`,
+    money: `<path d="M4 7h16v10H4z" /><path d="M8 12h.01M16 12h.01" /><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />`,
+    report: `<path d="M4 20V4h16v16H4Z" /><path d="M8 16V9M12 16V6M16 16v-4" />`,
+    star: `<path d="m12 3 2.7 5.4 6 .9-4.3 4.2 1 6-5.4-2.8-5.4 2.8 1-6-4.3-4.2 6-.9L12 3Z" />`,
+    x: `<path d="M6 6l12 12M18 6 6 18" />`,
+    upload: `<path d="M12 16V4" /><path d="m7 9 5-5 5 5" /><path d="M5 20h14" />`,
+    download: `<path d="M12 4v12" /><path d="m7 11 5 5 5-5" /><path d="M5 20h14" />`,
+    signal: `<path d="M5 17v-4M9.5 17V8M14.5 17V5M19 17v-7" />`
+  };
+  return `<svg class="tech-icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.signal}</svg>`;
+}
+
+function techList(items, icon = "check") {
+  return items.map(item => `
+    <li>
+      <span class="tech-list-icon">${techIcon(icon)}</span>
+      <span>${copy(item)}</span>
+    </li>
+  `).join("");
+}
+
+function renderTechCover(slide) {
+  return `
+    <section class="tech-cover-hero" aria-label="${copy(slide.badge)}">
+      <div class="tech-cover-badge">${techIcon("signal")}<span>${copy(slide.badge)}</span></div>
+      <div class="tech-cover-content">
+        <img class="tech-cover-logo" src="assets/pitch/filtr-logo.png" alt="FILTR" />
+        <span class="tech-cover-rule" aria-hidden="true"></span>
+        <h1>${copy(slide.title).replace("FILTR — ", "")}</h1>
+        <p>${copy(slide.subtitle)}</p>
+      </div>
+      <div class="tech-cover-aside">
+        <span>${state.lang === "en" ? "Operational model" : "Modelo operacional"}</span>
+        <strong>${state.lang === "en" ? "Automated label inside Sony's structure" : "Selo automatizado dentro da estrutura Sony"}</strong>
+        <div class="tech-cover-mini-flow" aria-label="${state.lang === "en" ? "Executive technical flow" : "Fluxo técnico executivo"}">
+          <b>CMS FILTR</b>
+          <i></i>
+          <b>Sony</b>
+          <i></i>
+          <b>DSPs</b>
+          <i class="return"></i>
+          <b>${state.lang === "en" ? "Data return" : "Dados de volta"}</b>
+        </div>
+        <blockquote>${copy(slide.quote)}</blockquote>
+      </div>
+      <div class="tech-cover-grid" aria-label="${state.lang === "en" ? "Technical pillars" : "Pilares técnicos"}">
+        ${slide.tags.map((tag, index) => `
+          <article>
+            <span>${techIcon(index === 0 ? "cms" : index === 1 ? "link" : "chart")}</span>
+            <strong>${copy(tag)}</strong>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderTechModelVisual() {
+  const costs = [
+    { pt: "Novos contratos com DSPs", en: "New DSP contracts" },
+    { pt: "Nova operação financeira", en: "New finance operation" },
+    { pt: "Nova camada de compliance", en: "New compliance layer" },
+    { pt: "Maior custo e maior prazo", en: "Higher cost and longer timeline" }
+  ];
+  const benefits = [
+    { pt: "CMS próprio da FILTR", en: "FILTR-owned CMS" },
+    { pt: "Integração com supply chain Sony", en: "Integration with Sony supply chain" },
+    { pt: "Distribuição pela estrutura Sony", en: "Distribution through Sony's structure" },
+    { pt: "Menor custo e menor complexidade", en: "Lower cost and lower complexity" }
+  ];
+  return `
+    <div class="tech-model-visual">
+      <div class="tech-model-grid">
+        <article class="tech-model-card tech-model-muted">
+          <span class="tech-model-label">${state.lang === "en" ? "Without Sony" : "Sem Sony"}</span>
+          <h3>${state.lang === "en" ? "New distributor" : "Nova distribuidora"}</h3>
+          <ul>${techList(costs, "x")}</ul>
+        </article>
+        <div class="tech-model-arrows" aria-hidden="true"><span></span><span></span><span></span></div>
+        <article class="tech-model-card tech-model-accent">
+          <span class="tech-model-label">${state.lang === "en" ? "With Sony" : "Com Sony"}</span>
+          <h3>${state.lang === "en" ? "Automated Sony label" : "Selo automatizado Sony"}</h3>
+          <ul>${techList(benefits, "check")}</ul>
+        </article>
+      </div>
+      <div class="tech-executive-note">
+        <strong>${state.lang === "en" ? "Executive reading" : "Leitura executiva"}</strong>
+        <p>${state.lang === "en"
+          ? "FILTR does not create a parallel distributor. It feeds Sony's existing supply chain with organized, validated assets and receives the information needed for commercial and financial management."
+          : "A FILTR não cria uma distribuidora paralela. Ela alimenta a supply chain existente da Sony com dados e assets organizados, validados e prontos para ingestão, recebendo de volta as informações necessárias para gestão comercial e financeira."}</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderTechConnectionVisual() {
+  const outbound = [
+    { label: "CMS FILTR", icon: "cms" },
+    { label: state.lang === "en" ? "Catalog validation" : "Validação de catálogo", icon: "check" },
+    { label: state.lang === "en" ? "Delivery package" : "Pacote de entrega", icon: "package" },
+    { label: "Supply Chain Sony", icon: "link" },
+    { label: "DSPs", icon: "globe" }
+  ];
+  const inbound = [
+    { label: state.lang === "en" ? "Delivery status" : "Status de entrega", icon: "check" },
+    { label: state.lang === "en" ? "Sales and consumption" : "Vendas e consumo", icon: "chart" },
+    { label: state.lang === "en" ? "Financial reports" : "Relatórios financeiros", icon: "money" },
+    { label: "CSV / XLS / API", icon: "file" },
+    { label: "Dashboards FILTR", icon: "report" }
+  ];
+  const sent = [
+    { pt: "catálogo", en: "catalog" },
+    { pt: "áudio", en: "audio" },
+    { pt: "capa", en: "artwork" },
+    { pt: "metadados", en: "metadata" },
+    { pt: "datas", en: "dates" },
+    { pt: "territórios", en: "territories" },
+    { pt: "regras comerciais", en: "commercial rules" }
+  ];
+  const returned = [
+    { pt: "status", en: "status" },
+    { pt: "vendas", en: "sales" },
+    { pt: "consumo", en: "consumption" },
+    { pt: "financeiro", en: "finance" },
+    { pt: "royalties", en: "royalties" },
+    { pt: "CSV", en: "CSV" },
+    { pt: "XLS", en: "XLS" },
+    { pt: "API", en: "API" }
+  ];
+  return `
+    <div class="tech-flow-visual">
+      <div class="tech-chip-row">
+        <span>${techIcon("upload")}${state.lang === "en" ? "FILTR sends" : "FILTR envia"}</span>
+        ${sent.map(item => `<b>${copy(item)}</b>`).join("")}
+      </div>
+      <div class="tech-flow-row tech-flow-outbound">
+        ${outbound.map((node, index) => `
+          <article class="tech-node">
+            ${techIcon(node.icon)}
+            <strong>${node.label}</strong>
+          </article>
+          ${index < outbound.length - 1 ? `<span class="tech-arrow" aria-hidden="true"></span>` : ""}
+        `).join("")}
+      </div>
+      <div class="tech-return-loop" aria-hidden="true"><span></span><b>↕</b><span></span></div>
+      <div class="tech-flow-row tech-flow-inbound">
+        ${inbound.map((node, index) => `
+          <article class="tech-node">
+            ${techIcon(node.icon)}
+            <strong>${node.label}</strong>
+          </article>
+          ${index < inbound.length - 1 ? `<span class="tech-arrow reverse" aria-hidden="true"></span>` : ""}
+        `).join("")}
+      </div>
+      <div class="tech-chip-row tech-chip-row-return">
+        <span>${techIcon("download")}${state.lang === "en" ? "Sony returns" : "Sony retorna"}</span>
+        ${returned.map(item => `<b>${copy(item)}</b>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderTechResponsibilitiesVisual() {
+  const filtr = [
+    { pt: "CMS próprio", en: "Own CMS" },
+    { pt: "Cadastro de catálogo", en: "Catalog registration" },
+    { pt: "Validação de metadados", en: "Metadata validation" },
+    { pt: "Automação de entrega", en: "Delivery automation" },
+    { pt: "Dashboard e inteligência", en: "Dashboard and intelligence" }
+  ];
+  const sony = [
+    { pt: "Supply chain", en: "Supply chain" },
+    { pt: "Contratos com DSPs", en: "DSP contracts" },
+    { pt: "Distribuição", en: "Distribution" },
+    { pt: "Governança e compliance", en: "Governance and compliance" },
+    { pt: "Relatórios e financeiro", en: "Reports and finance" }
+  ];
+  return `
+    <div class="tech-responsibility-visual">
+      <div class="tech-responsibility-grid">
+        <article class="tech-side-card">
+          <h3>FILTR</h3>
+          <ul>${techList(filtr, "check")}</ul>
+        </article>
+        <article class="tech-side-card">
+          <h3>Sony</h3>
+          <ul>${techList(sony, "shield")}</ul>
+        </article>
+      </div>
+      <div class="tech-connector-bar">
+        <span>${techIcon("link")}${state.lang === "en" ? "Technical connector" : "Conector técnico"}</span>
+        <b>API</b>
+        <b>DDEX / ERN 4.x</b>
+        <b>SFTP</b>
+        <b>FTP ${state.lang === "en" ? "secure" : "seguro"}</b>
+      </div>
+      <div class="tech-main-message">${state.lang === "en"
+        ? "FILTR prepares, validates and automates. Sony distributes, governs and reports."
+        : "A FILTR prepara, valida e automatiza. A Sony distribui, governa e reporta."}</div>
+    </div>
+  `;
+}
+
+function renderTechDependenciesVisual() {
+  const catalog = [
+    { pt: "Formato técnico: API, DDEX/ERN 4.x, SFTP, FTP seguro ou cloud storage", en: "Technical format: API, DDEX/ERN 4.x, SFTP, secure FTP or cloud storage" },
+    { pt: "Campos obrigatórios e padrão de arquivos", en: "Required fields and file standards" },
+    { pt: "Credenciais de sandbox e produção", en: "Sandbox and production credentials" },
+    { pt: "Regras de validação, erro e rejeição", en: "Validation, error and rejection rules" },
+    { pt: "Workflow de aprovação e status de entrega", en: "Approval workflow and delivery status" }
+  ];
+  const reports = [
+    { pt: "Relatórios de vendas por artista, faixa, release, DSP, país e período", en: "Sales reports by artist, track, release, DSP, country and period" },
+    { pt: "Relatórios financeiros, royalties, ajustes e descontos", en: "Financial reports, royalties, adjustments and deductions" },
+    { pt: "Formato CSV, XLS, XLSX, API ou outro padrão disponível", en: "CSV, XLS, XLSX, API or another available format" },
+    { pt: "Periodicidade: diária, semanal, mensal ou ciclo Sony", en: "Frequency: daily, weekly, monthly or Sony cycle" },
+    { pt: "Identificadores: ISRC, UPC, artista, release ID e DSP ID", en: "Identifiers: ISRC, UPC, artist, release ID and DSP ID" }
+  ];
+  return `
+    <div class="tech-dependencies-visual">
+      <article class="tech-list-card">
+        <div class="tech-card-title">${techIcon("upload")}<h3>${state.lang === "en" ? "1. Catalog delivery" : "1. Para envio do catálogo"}</h3></div>
+        <ul>${techList(catalog, "file")}</ul>
+      </article>
+      <article class="tech-list-card">
+        <div class="tech-card-title">${techIcon("download")}<h3>${state.lang === "en" ? "2. Data return" : "2. Para retorno de dados"}</h3></div>
+        <ul>${techList(reports, "chart")}</ul>
+      </article>
+      <div class="tech-executive-note tech-full-note">
+        <strong>${state.lang === "en" ? "Decision needed" : "Decisão necessária"}</strong>
+        <p>${state.lang === "en"
+          ? "Sony only needs to define the entry point, mandatory fields and return model. FILTR adapts the CMS package to the approved pattern."
+          : "A Sony só precisa definir a porta de entrada, os campos obrigatórios e o modelo de retorno. A FILTR adapta o pacote do CMS ao padrão aprovado."}</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderTechReturnsVisual() {
+  const cards = [
+    { label: { pt: "Status de entrega", en: "Delivery status" }, text: { pt: "Aceito, rejeitado, erro, pendente e confirmação por plataforma.", en: "Accepted, rejected, error, pending and platform confirmation." }, icon: "check" },
+    { label: { pt: "Vendas por DSP", en: "Sales by DSP" }, text: { pt: "Receita por plataforma, faixa, release, artista e período.", en: "Revenue by platform, track, release, artist and period." }, icon: "chart" },
+    { label: { pt: "Consumo por território", en: "Consumption by territory" }, text: { pt: "Países e regiões com consumo para mapa de mercado.", en: "Countries and regions with consumption for market maps." }, icon: "globe" },
+    { label: { pt: "Relatórios financeiros", en: "Financial reports" }, text: { pt: "Receita bruta, líquida, ajustes, descontos e royalties.", en: "Gross revenue, net revenue, adjustments, deductions and royalties." }, icon: "money" },
+    { label: { pt: "Royalties e pagamentos", en: "Royalties and payments" }, text: { pt: "Status de repasse, histórico e valores a pagar.", en: "Payout status, history and payable values." }, icon: "shield" },
+    { label: { pt: "CSV / XLS / API", en: "CSV / XLS / API" }, text: { pt: "Importação automática ou exportação para ERP e BI.", en: "Automatic import or export to ERP and BI." }, icon: "file" }
+  ];
+  return `
+    <div class="tech-returns-visual">
+      <div class="tech-return-headline">
+        <div>
+          <span>${state.lang === "en" ? "Sony return → FILTR CMS" : "Retorno Sony → CMS FILTR"}</span>
+          <strong>${state.lang === "en" ? "The CMS becomes label management." : "O CMS vira gestão do selo."}</strong>
+        </div>
+        <div class="tech-return-format-row" aria-label="${state.lang === "en" ? "Return formats" : "Formatos de retorno"}">
+          <b>CSV</b>
+          <b>XLS</b>
+          <b>API</b>
+        </div>
+      </div>
+      <div class="tech-returns-layout">
+        <div class="tech-return-cards">
+          ${cards.map(card => `
+            <article>
+              ${techIcon(card.icon)}
+              <div>
+                <strong>${copy(card.label)}</strong>
+                <span>${copy(card.text)}</span>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+        <div class="tech-report-panel">
+          <article class="tech-line-chart">
+            <h3>${state.lang === "en" ? "Sales evolution" : "Evolução de vendas"}</h3>
+            <svg viewBox="0 0 520 190" role="img" aria-label="${state.lang === "en" ? "Mock sales evolution chart" : "Gráfico mockado de evolução de vendas"}">
+              <path class="grid" d="M32 40H496M32 86H496M32 132H496M32 178H496" />
+              <path class="area" d="M32 154 86 132 140 98 194 126 248 82 302 92 356 46 410 104 464 70 496 96V178H32Z" />
+              <path class="line" d="M32 154 86 132 140 98 194 126 248 82 302 92 356 46 410 104 464 70 496 96" />
+              <g class="points"><circle cx="86" cy="132" r="5" /><circle cx="140" cy="98" r="5" /><circle cx="248" cy="82" r="5" /><circle cx="356" cy="46" r="5" /><circle cx="464" cy="70" r="5" /></g>
+            </svg>
+          </article>
+          <div class="tech-report-bottom">
+            <article class="tech-bar-chart">
+              <h3>${state.lang === "en" ? "Sales by platform" : "Vendas por plataforma"}</h3>
+              ${[
+                ["Spotify", 42],
+                ["Apple Music", 28],
+                ["YouTube", 15],
+                ["Amazon Music", 8],
+                ["Deezer", 4]
+              ].map(([label, value]) => `
+                <div><span>${label}</span><b style="width:${value}%"></b><em>${value}%</em></div>
+              `).join("")}
+            </article>
+            <article class="tech-donut-card">
+              <h3>${state.lang === "en" ? "Consumption by territory" : "Consumo por território"}</h3>
+              <div class="tech-donut" aria-hidden="true"></div>
+              <ul>
+                <li><span></span>Brasil 45%</li>
+                <li><span></span>Estados Unidos 18%</li>
+                <li><span></span>México 9%</li>
+                <li><span></span>Outros 28%</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="tech-report-note">
+        ${techIcon("report")}
+        <span>${state.lang === "en"
+          ? "Status, sales, consumption, royalties and finance return to the same operational environment."
+          : "Status, vendas, consumo, royalties e financeiro voltam para o mesmo ambiente operacional."}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderTechSummaryVisual() {
+  const benefits = [
+    { title: { pt: "Economia", en: "Efficiency" }, text: { pt: "Uma integração com a Sony substitui múltiplas conexões diretas com DSPs.", en: "One Sony integration replaces multiple direct DSP connections." }, icon: "money" },
+    { title: { pt: "Governança", en: "Governance" }, text: { pt: "A operação permanece dentro da estrutura e do compliance Sony.", en: "The operation remains inside Sony's structure and compliance." }, icon: "shield" },
+    { title: { pt: "Escala", en: "Scale" }, text: { pt: "O CMS automatiza catálogo, status, relatórios e dashboards sem criar nova distribuidora.", en: "The CMS automates catalog, status, reports and dashboards without creating a new distributor." }, icon: "chart" }
+  ];
+  return `
+    <div class="tech-summary-visual">
+      <div class="tech-benefit-grid">
+        ${benefits.map((benefit, index) => `
+          <article>
+            <span>${techIcon(benefit.icon)}</span>
+            <small>0${index + 1}</small>
+            <h3>${copy(benefit.title)}</h3>
+            <p>${copy(benefit.text)}</p>
+          </article>
+        `).join("")}
+      </div>
+      <div class="tech-summary-box">
+        <strong>${state.lang === "en" ? "Proposal wording" : "Texto para proposta"}</strong>
+        <p>${state.lang === "en"
+          ? "FILTR operates as an automated label inside Sony's structure. It prepares structured catalog packages, connects to the technical format defined by Sony and receives status, sales, consumption, royalties and financial reports back into the FILTR CMS."
+          : "A FILTR opera como um selo automatizado dentro da estrutura da Sony. Ela prepara pacotes de catálogo estruturado, conecta no formato técnico definido pela Sony e recebe de volta status, vendas, consumo, royalties e relatórios financeiros no CMS FILTR."}</p>
+      </div>
+      <div class="tech-next-step">
+        ${techIcon("star")}
+        <span><b>${state.lang === "en" ? "Next step:" : "Próximo passo:"}</b> ${state.lang === "en"
+          ? "align with Sony the technical input format and the return model for reports."
+          : "alinhar com a Sony o formato técnico de entrada e o modelo de retorno dos relatórios."}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderTechVisual(slide) {
+  if (slide.visual === "model") return renderTechModelVisual();
+  if (slide.visual === "connection") return renderTechConnectionVisual();
+  if (slide.visual === "responsibilities") return renderTechResponsibilitiesVisual();
+  if (slide.visual === "dependencies") return renderTechDependenciesVisual();
+  if (slide.visual === "returns") return renderTechReturnsVisual();
+  if (slide.visual === "summary") return renderTechSummaryVisual();
+  return renderTechCover(slide);
+}
+
+function renderTechDeck() {
+  const index = techIndexFromRoute();
+  const slide = data.techSlides[index - 1];
+  const prev = Math.max(index - 1, 1);
+  const next = Math.min(index + 1, data.techSlides.length);
+  const progress = Math.round((index / data.techSlides.length) * 100);
+  if (slide.visual === "cover") {
+    return shell(`
+      <main class="pitch-deck tech-deck tech-deck-opening">
+        ${renderTechCover(slide)}
+        <div class="pitch-opening-controls tech-opening-controls">
+          <a class="button primary" href="#/tech/${next}">${state.lang === "en" ? "Next" : "Próximo"}</a>
+        </div>
+        <div class="pitch-progress tech-progress" aria-label="Progresso da apresentação"><span style="width:${progress}%"></span></div>
+        <nav class="pitch-dots tech-dots" aria-label="Slides">
+          ${data.techSlides.map((_, itemIndex) => `<a class="${itemIndex + 1 === index ? "active" : ""}" href="#/tech/${itemIndex + 1}">${itemIndex + 1}</a>`).join("")}
+        </nav>
+      </main>
+    `);
+  }
+  return shell(`
+    <main class="pitch-deck tech-deck">
+      <section class="pitch-slide tech-slide">
+        <div class="pitch-copy tech-copy">
+          <span class="section-kicker">${copy(slide.badge)} · ${index}/${data.techSlides.length}</span>
+          <h1>${copy(slide.title)}</h1>
+          <p class="pitch-subtitle">${copy(slide.subtitle)}</p>
+          <p>${copy(slide.body)}</p>
+          <blockquote class="pitch-impact">${copy(slide.quote)}</blockquote>
+          <div class="pitch-controls">
+            <a class="button secondary ${index === 1 ? "disabled" : ""}" href="#/tech/${prev}">${state.lang === "en" ? "Previous" : "Anterior"}</a>
+            ${index === data.techSlides.length
+              ? `<a class="button primary" href="#/">${state.lang === "en" ? "Back to portal" : "Voltar ao portal"}</a>`
+              : `<a class="button primary" href="#/tech/${next}">${state.lang === "en" ? "Next" : "Próximo"}</a>`}
+          </div>
+        </div>
+        <div class="pitch-visual tech-visual tech-visual-${slide.visual}">
+          ${renderTechVisual(slide)}
+        </div>
+      </section>
+      <div class="pitch-progress tech-progress" aria-label="Progresso da apresentação"><span style="width:${progress}%"></span></div>
+      <nav class="pitch-dots tech-dots" aria-label="Slides">
+        ${data.techSlides.map((_, itemIndex) => `<a class="${itemIndex + 1 === index ? "active" : ""}" href="#/tech/${itemIndex + 1}">${itemIndex + 1}</a>`).join("")}
+      </nav>
+    </main>
+  `);
+}
+
 function experienceModuleFromRoute() {
   const id = routePath().split("/experience/")[1] || "dashboard";
   return data.experienceModules.find(module => module.id === id) || data.experienceModules[0];
@@ -2952,6 +3378,8 @@ function render() {
   const path = routePath();
   const route = path.startsWith("/pitch")
     ? { render: renderPitchDeck }
+    : path.startsWith("/tech")
+      ? { render: renderTechDeck }
     : routes.find(item => item.path === path) || (path.startsWith("/noticias/") ? { render: renderNews } : routes[0]);
   document.documentElement.lang = state.lang === "en" ? "en" : "pt-BR";
   app.innerHTML = route.render();
@@ -3073,27 +3501,32 @@ function bindInteractions() {
 
 window.addEventListener("hashchange", render);
 window.addEventListener("keydown", event => {
-  if (!routePath().startsWith("/pitch")) return;
+  const path = routePath();
+  const isPitch = path.startsWith("/pitch");
+  const isTech = path.startsWith("/tech");
+  if (!isPitch && !isTech) return;
   const activeElement = document.activeElement;
   const isTyping = activeElement && ["INPUT", "TEXTAREA", "SELECT"].includes(activeElement.tagName);
   if (isTyping || event.metaKey || event.ctrlKey || event.altKey) return;
 
-  const index = pitchIndexFromRoute();
+  const index = isPitch ? pitchIndexFromRoute() : techIndexFromRoute();
+  const total = isPitch ? data.pitchSlides.length : data.techSlides.length;
+  const basePath = isPitch ? "/pitch" : "/tech";
   if (event.key === "ArrowRight" || event.key === "PageDown") {
     event.preventDefault();
-    go(index === data.pitchSlides.length ? "/" : `/pitch/${index + 1}`);
+    go(index === total ? "/" : `${basePath}/${index + 1}`);
   }
   if (event.key === "ArrowLeft" || event.key === "PageUp") {
     event.preventDefault();
-    go(`/pitch/${Math.max(index - 1, 1)}`);
+    go(`${basePath}/${Math.max(index - 1, 1)}`);
   }
   if (event.key === "Home") {
     event.preventDefault();
-    go("/pitch/1");
+    go(`${basePath}/1`);
   }
   if (event.key === "End") {
     event.preventDefault();
-    go(`/pitch/${data.pitchSlides.length}`);
+    go(`${basePath}/${total}`);
   }
 });
 render();
