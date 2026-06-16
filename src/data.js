@@ -474,6 +474,115 @@ window.FILTR_DATA = {
     cities: ["Recife", "Fortaleza", "Salvador"],
     recommendation: { pt: "Completar trilha Conteúdo Vertical, aplicar para Palco FILTR Nordeste e contratar pacote regional do FILTR Media Network.", en: "Complete Vertical Content, apply for Palco FILTR Nordeste and hire the regional FILTR Media Network package." }
   },
+  territorySlides: [
+    {
+      kicker: { pt: "Apresentação executiva · Grupo Sony", en: "Executive deck · Sony Group" },
+      title: { pt: "Presença territorial para desenvolver o Brasil musical real.", en: "Territorial presence to develop the real musical Brazil." },
+      subtitle: { pt: "Uma camada estratégica de curadoria regional, parceiros locais e desenvolvimento de carreira para Sony Music e Som Livre.", en: "A strategic layer of regional curation, local partners and career development for Sony Music and Som Livre." },
+      quote: { pt: "A FILTR não distribui volume. A FILTR organiza acesso qualificado.", en: "FILTR does not distribute volume. FILTR organizes qualified access." },
+      visual: "cover",
+      cta: { pt: "Iniciar apresentação", en: "Start presentation" }
+    },
+    {
+      kicker: { pt: "A tese", en: "The thesis" },
+      title: { pt: "O Brasil musical é maior do que o eixo Rio–São Paulo.", en: "Musical Brazil is bigger than the Rio–São Paulo axis." },
+      body: { pt: "A música brasileira se movimenta em cenas locais: festas regionais, produtores, compositores, selos, empresários, palcos, paredões, vaquejadas, São João, festivais, igrejas, bailes, casas de show e circuitos independentes.", en: "Brazilian music moves through local scenes: regional parties, producers, songwriters, labels, managers, stages, sound systems, rodeos, São João, festivals, churches, dances, venues and independent circuits." },
+      quote: { pt: "A FILTR nasce para chegar onde a música nasce.", en: "FILTR exists to arrive where music is born." },
+      visual: "thesis-map"
+    },
+    {
+      kicker: { pt: "O problema", en: "The problem" },
+      title: { pt: "Subir música ficou fácil. Filtrar oportunidade ficou difícil.", en: "Uploading music got easy. Filtering opportunity got hard." },
+      body: { pt: "O mercado digital criou volume — mas volume não é estratégia. A dificuldade não é distribuir tudo. É identificar, antes dos outros, o que tem valor cultural, público, negócio e potencial de desenvolvimento.", en: "The digital market created volume — but volume is not strategy. The challenge is not distributing everything. It is identifying, before everyone else, what has cultural, audience, business and development value." },
+      quote: { pt: "O excesso de oferta tornou a curadoria mais valiosa do que o acesso.", en: "Oversupply made curation more valuable than access." },
+      visual: "noise-signal"
+    },
+    {
+      kicker: { pt: "Diferenciação", en: "Differentiation" },
+      title: { pt: "A FILTR não é uma plataforma aberta de upload.", en: "FILTR is not an open upload platform." },
+      body: { pt: "Enquanto o mercado abriu a porta para qualquer música subir, a FILTR cria a inteligência para entender o que merece ser desenvolvido.", en: "While the market opened the door for any track to go up, FILTR builds the intelligence to understand what deserves to be developed." },
+      quote: { pt: "A FILTR não distribui volume. A FILTR organiza acesso qualificado.", en: "FILTR does not distribute volume. FILTR organizes qualified access." },
+      visual: "comparison"
+    },
+    {
+      kicker: { pt: "O que a FILTR é", en: "What FILTR is" },
+      title: { pt: "A FILTR é uma rede de curadoria territorial.", en: "FILTR is a network of territorial curation." },
+      body: { pt: "Parceiros locais, inteligência de cena e oportunidades já filtradas conectam o desenvolvimento de carreira regional à estrutura nacional e global da Sony Music e da Som Livre.", en: "Local partners, scene intelligence and pre-filtered opportunities connect regional career development to the national and global structure of Sony Music and Som Livre." },
+      quote: { pt: "Não é uma plataforma aberta. É uma rede de presença.", en: "It is not an open platform. It is a network of presence." },
+      visual: "value-flow"
+    },
+    {
+      kicker: { pt: "Como funciona", en: "How it works" },
+      title: { pt: "Da cena local à escala nacional.", en: "From the local scene to national scale." },
+      body: { pt: "Cinco etapas conectam o território à estrutura do grupo, transformando leitura de cena em pipeline qualificado.", en: "Five stages connect the territory to the group's structure, turning scene reading into a qualified pipeline." },
+      quote: { pt: "A FILTR é o filtro entre o ruído do volume e o valor real da cena.", en: "FILTR is the filter between the noise of volume and the real value of the scene." },
+      visual: "process"
+    },
+    {
+      kicker: { pt: "O papel do parceiro", en: "The partner's role" },
+      title: { pt: "O parceiro local conhece a cena antes do algoritmo.", en: "The local partner knows the scene before the algorithm." },
+      body: { pt: "Os parceiros regionais são radares culturais, curadores territoriais e conectores de artistas, produtores e empresários — validadores de contexto que traduzem o território para a estrutura nacional.", en: "Regional partners are cultural radars, territorial curators and connectors of artists, producers and managers — context validators who translate the territory for the national structure." },
+      quote: { pt: "O parceiro não apenas indica artistas. Ele traduz o território.", en: "The partner does not just recommend artists. They translate the territory." },
+      visual: "partner"
+    },
+    {
+      kicker: { pt: "Por que Sony Music / Som Livre", en: "Why Sony Music / Som Livre" },
+      title: { pt: "Uma nova camada para um ecossistema já poderoso.", en: "A new layer for an already powerful ecosystem." },
+      body: { pt: "A FILTR amplia a capilaridade do grupo. Não substitui a Sony Music ou a Som Livre — aproxima o grupo das cenas que ainda não estão dentro da estrutura.", en: "FILTR expands the group's reach. It does not replace Sony Music or Som Livre — it brings the group closer to scenes not yet inside the structure." },
+      quote: { pt: "A FILTR aproxima o grupo das cenas que movimentam cultura, público, show, repertório e comportamento.", en: "FILTR brings the group closer to the scenes that drive culture, audience, shows, repertoire and behavior." },
+      visual: "layers"
+    },
+    {
+      kicker: { pt: "Primeiro case", en: "First case" },
+      title: { pt: "Nordeste: primeiro case de presença territorial.", en: "Northeast: the first case of territorial presence." },
+      body: { pt: "O Nordeste é a região ideal para provar o modelo: cenas musicais fortes, festas de massa, circuitos regionais de show, artistas independentes com público real e uma identidade cultural própria.", en: "The Northeast is the ideal region to prove the model: strong music scenes, mass parties, regional show circuits, independent artists with real audiences and a distinct cultural identity." },
+      quote: { pt: "O Nordeste não precisa ser descoberto. Ele precisa ser conectado, estruturado e escalado.", en: "The Northeast does not need to be discovered. It needs to be connected, structured and scaled." },
+      visual: "scenes"
+    },
+    {
+      kicker: { pt: "Mapa de presença · Fase 1", en: "Presence map · Phase 1" },
+      title: { pt: "Presença FILTR: Fase 1 Nordeste.", en: "FILTR presence: Phase 1 Northeast." },
+      body: { pt: "Cada ponto FILTR é um radar local: cena, artista, produtor, empresário, palco, repertório e oportunidade. Presença territorial, parceiros locais e curadoria de cena.", en: "Each FILTR point is a local radar: scene, artist, producer, manager, stage, repertoire and opportunity. Territorial presence, local partners and scene curation." },
+      visual: "ne-map"
+    },
+    {
+      kicker: { pt: "Ativação territorial", en: "Territorial activation" },
+      title: { pt: "Palco FILTR: presença onde a cultura acontece.", en: "Palco FILTR: presence where culture happens." },
+      body: { pt: "A presença territorial não é apenas digital. A FILTR também existe fisicamente em palcos, festas e ativações culturais — começando pelo São João, a maior temporada de cultura viva do Nordeste.", en: "Territorial presence is not only digital. FILTR also exists physically on stages, parties and cultural activations — starting with São João, the Northeast's biggest season of living culture." },
+      quote: { pt: "Palco FILTR é a presença da estratégia dentro da cultura viva.", en: "Palco FILTR is strategy made present inside living culture." },
+      visual: "stage"
+    },
+    {
+      kicker: { pt: "Modelo de escala", en: "Scale model" },
+      title: { pt: "Do case Nordeste para uma rede Brasil.", en: "From the Northeast case to a Brazil-wide network." },
+      body: { pt: "O modelo nasce no Nordeste como prova de conceito e se expande, fase a fase, até uma rede nacional de inteligência musical territorial.", en: "The model is born in the Northeast as proof of concept and expands, phase by phase, into a national network of territorial music intelligence." },
+      quote: { pt: "A primeira fase é Nordeste. A visão é Brasil.", en: "The first phase is the Northeast. The vision is Brazil." },
+      visual: "roadmap"
+    },
+    {
+      kicker: { pt: "Valor estratégico", en: "Strategic value" },
+      title: { pt: "O que a FILTR entrega para o grupo.", en: "What FILTR delivers to the group." },
+      body: { pt: "Capilaridade nacional, pipeline qualificado e inteligência de cena local convertem território em oportunidade e oportunidade em escala.", en: "National reach, a qualified pipeline and local scene intelligence convert territory into opportunity and opportunity into scale." },
+      quote: { pt: "A FILTR transforma território em inteligência, inteligência em oportunidade e oportunidade em escala.", en: "FILTR turns territory into intelligence, intelligence into opportunity and opportunity into scale." },
+      visual: "value"
+    },
+    {
+      kicker: { pt: "Visão", en: "Vision" },
+      title: { pt: "Uma Sony / Som Livre mais presente, mais próxima e mais brasileira.", en: "A Sony / Som Livre more present, closer and more Brazilian." },
+      body: { pt: "A FILTR posiciona o grupo como uma estrutura que entende o Brasil por dentro, reconhecendo que o futuro da música brasileira passa por cenas regionais, parceiros locais e novas formas de desenvolvimento artístico.", en: "FILTR positions the group as a structure that understands Brazil from the inside, recognizing that the future of Brazilian music runs through regional scenes, local partners and new forms of artistic development." },
+      quote: { pt: "O futuro da música brasileira não será centralizado. Será conectado.", en: "The future of Brazilian music will not be centralized. It will be connected." },
+      visual: "vision"
+    },
+    {
+      kicker: { pt: "Encerramento", en: "Closing" },
+      title: { pt: "FILTR: onde a cena encontra escala.", en: "FILTR: where the scene meets scale." },
+      body: { pt: "A FILTR é a camada que conecta território, curadoria e desenvolvimento. Começa no Nordeste. Escala para o Brasil. Fortalece Sony Music e Som Livre como presença nacional real.", en: "FILTR is the layer that connects territory, curation and development. It starts in the Northeast. It scales to Brazil. It strengthens Sony Music and Som Livre as real national presence." },
+      quote: { pt: "Não é sobre esperar a música chegar ao centro. É sobre estar no território quando ela nasce.", en: "It is not about waiting for music to reach the center. It is about being in the territory when it is born." },
+      visual: "closing",
+      cta: { pt: "Voltar ao portal", en: "Back to portal" },
+      secondaryCta: { pt: "Rever apresentação", en: "Review presentation" }
+    }
+  ],
   experienceModules: [
     { id: "dashboard", label: { pt: "Home / Dashboard", en: "Home / Dashboard" }, title: { pt: "Visão geral da jornada", en: "Journey overview" }, score: "82", status: { pt: "Pronta para aceleração regional", en: "Ready for regional acceleration" }, actions: [{ pt: "Revisar diagnóstico", en: "Review diagnosis" }, { pt: "Abrir plano de lançamento", en: "Open release plan" }] },
     { id: "diagnostico", label: { pt: "Diagnóstico do Artista", en: "Artist Diagnosis" }, title: { pt: "Onde Maya Reis está agora", en: "Where Maya Reis is now" }, score: "74", status: { pt: "Forte no Nordeste, precisa converter conteúdo em audiência recorrente", en: "Strong in the Northeast, needs to convert content into recurring audience" }, actions: [{ pt: "Conteúdo Vertical", en: "Vertical Content" }, { pt: "Imagem e narrativa", en: "Image and narrative" }] },
