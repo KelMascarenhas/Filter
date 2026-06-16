@@ -7054,11 +7054,12 @@ td strong { color: var(--text); }
 }
 .terr-cover-bg {
   position: absolute;
-  inset: 0 -6% -8% auto;
-  width: 58%;
-  opacity: 0.5;
+  inset: auto 1.5% 5% auto;
+  width: 52%;
+  opacity: 0.62;
   z-index: 0;
-  mask-image: linear-gradient(90deg, transparent, #000 40%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 46%);
+  mask-image: linear-gradient(90deg, transparent, #000 46%);
 }
 .terr-cover-bg .terr-map-overlay { display: none; }
 .terr-cover-content {
