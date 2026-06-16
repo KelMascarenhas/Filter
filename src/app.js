@@ -200,6 +200,7 @@ const translations = {
     "Clique para ouvir nossas playlists.": "Click to listen to our playlists.",
     "Clique para assistir às entrevistas.": "Click to watch interviews.",
     "Palcos FILTR": "FILTR Stages",
+    "Presença Territorial": "Territorial Presence",
     "Clique para conhecer os palcos e shows.": "Click to discover stages and shows.",
     "Lançamentos": "Releases",
     "Agora": "Now",
@@ -353,6 +354,7 @@ const routes = [
   { path: "/", label: "Portal", render: renderHome },
   { path: "/pitch", label: "Pitch", render: renderPitchDeck },
   { path: "/tech", label: "Tech & Operação", render: renderTechDeck },
+  { path: "/territorio", label: "Presença Territorial", render: renderTerritoryDeck },
   { path: "/noticias", label: "Notícias", render: renderNews },
   { path: "/lancamentos", label: "Lançamentos", render: renderHome },
   { path: "/entrevistas", label: "Entrevistas", render: renderHome },
@@ -420,6 +422,7 @@ function shell(content, options = {}) {
       <div class="header-actions" aria-label="Ações do cabeçalho">
         <a class="presentation-link ${active("/pitch")}" href="#/pitch/1">${t("Apresentação")}</a>
         <a class="presentation-link tech-link ${active("/tech")}" href="#/tech/1">Tech & Operação</a>
+        <a class="presentation-link terr-link ${active("/territorio")}" href="#/territorio/1">${t("Presença Territorial")}</a>
         <button class="language-toggle" type="button" data-language-toggle aria-label="Alternar idioma">
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
@@ -2409,6 +2412,456 @@ function renderTechDeck() {
   `);
 }
 
+function territoryIndexFromRoute() {
+  const raw = Number(routePath().split("/territorio/")[1] || 1);
+  return Math.min(Math.max(raw || 1, 1), data.territorySlides.length);
+}
+
+function terrIcon(name) {
+  const paths = {
+    radar: `<path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" /><path d="M12 12 18 6" /><path d="M12 12h.01" /><path d="M12 8a4 4 0 0 1 4 4" />`,
+    pin: `<path d="M12 21s-6-5.3-6-10a6 6 0 0 1 12 0c0 4.7-6 10-6 10Z" /><circle cx="12" cy="11" r="2.4" />`,
+    partner: `<circle cx="8" cy="9" r="3" /><circle cx="16" cy="9" r="3" /><path d="M3 19a5 5 0 0 1 10 0M11 19a5 5 0 0 1 10 0" />`,
+    stage: `<path d="M4 20V9l8-5 8 5v11" /><path d="M4 20h16M9 20v-5h6v5" />`,
+    scene: `<path d="M5 18V7M10 18V4M15 18v-8M20 18v-5" /><path d="M3 21h18" />`,
+    scale: `<path d="M4 19h16M7 19v-6M12 19V8M17 19v-9" /><path d="m4 9 5-4 5 3 6-5" />`,
+    filter: `<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z" />`,
+    data: `<ellipse cx="12" cy="6" rx="7" ry="3" /><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />`,
+    territory: `<path d="M9 4 4 6v14l5-2 6 2 5-2V4l-5 2-6-2Z" /><path d="M9 4v14M15 6v14" />`,
+    spark: `<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" />`,
+    check: `<path d="M20 6 9 17l-5-5" />`,
+    x: `<path d="M6 6l12 12M18 6 6 18" />`,
+    brand: `<path d="M5 4h14v4l-5 4v8l-4-2v-6L5 8V4Z" />`
+  };
+  return `<svg class="terr-icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.pin}</svg>`;
+}
+
+const terrCities = [
+  { id: "fortaleza", name: "Fortaleza", uf: "CE", x: 318, y: 96, phase: 1 },
+  { id: "natal", name: "Natal", uf: "RN", x: 506, y: 150, phase: 1 },
+  { id: "joaopessoa", name: "João Pessoa", uf: "PB", x: 512, y: 206, phase: 2 },
+  { id: "recife", name: "Recife", uf: "PE", x: 506, y: 250, phase: 1 },
+  { id: "maceio", name: "Maceió", uf: "AL", x: 472, y: 304, phase: 2 },
+  { id: "aracaju", name: "Aracaju", uf: "SE", x: 436, y: 352, phase: 1 },
+  { id: "salvador", name: "Salvador", uf: "BA", x: 420, y: 430, phase: 1 },
+  { id: "saoluis", name: "São Luís", uf: "MA", x: 150, y: 92, phase: 2 },
+  { id: "teresina", name: "Teresina", uf: "PI", x: 224, y: 168, phase: 2 }
+];
+
+function renderTerritoryMap() {
+  const phase1 = terrCities.filter(c => c.phase === 1);
+  // connection lines between active phase-1 nodes (network feel)
+  const order = ["fortaleza", "natal", "recife", "aracaju", "salvador"];
+  const ordered = order.map(id => phase1.find(c => c.id === id)).filter(Boolean);
+  const lines = ordered.slice(1).map((c, i) => {
+    const a = ordered[i];
+    return `<line x1="${a.x}" y1="${a.y}" x2="${c.x}" y2="${c.y}" />`;
+  }).join("");
+  const node = city => {
+    const active = city.phase === 1;
+    const label = active ? `Filtr ${city.name}` : `${city.name} / ${city.uf}`;
+    return `
+      <g class="terr-node ${active ? "is-active" : "is-expansion"}" transform="translate(${city.x} ${city.y})">
+        ${active ? `<circle class="terr-node-pulse" r="22" />` : ""}
+        <circle class="terr-node-dot" r="${active ? 9 : 7}" />
+        <text class="terr-node-label" x="${city.x > 430 ? 16 : -16}" y="5" text-anchor="${city.x > 430 ? "start" : "end"}">${label}</text>
+        ${active ? `<text class="terr-node-uf" x="${city.x > 430 ? 16 : -16}" y="22" text-anchor="${city.x > 430 ? "start" : "end"}">${city.uf} · Fase 1</text>` : ""}
+      </g>
+    `;
+  };
+  return `
+    <div class="terr-map-wrap">
+      <svg class="terr-map" viewBox="0 0 600 520" role="img" aria-label="${state.lang === "en" ? "Strategic map of FILTR presence in the Northeast" : "Mapa estratégico de presença FILTR no Nordeste"}">
+        <defs>
+          <radialGradient id="terrLand" cx="42%" cy="36%" r="78%">
+            <stop offset="0%" stop-color="rgba(255,138,0,0.20)" />
+            <stop offset="55%" stop-color="rgba(255,138,0,0.07)" />
+            <stop offset="100%" stop-color="rgba(255,138,0,0.02)" />
+          </radialGradient>
+        </defs>
+        <path class="terr-land" d="M120 70 L330 58 L420 70 L515 120 L528 175 L520 235 L488 300 L452 360 L432 430 L398 470 L350 452 L300 462 L250 440 L210 392 L176 330 L150 250 L132 180 L112 120 Z" fill="url(#terrLand)" />
+        <g class="terr-lines">${lines}</g>
+        <g class="terr-nodes">${terrCities.map(node).join("")}</g>
+      </svg>
+      <div class="terr-map-overlay">
+        <span class="terr-map-phase">${terrIcon("territory")} ${state.lang === "en" ? "Phase 1: Northeast" : "Fase 1: Nordeste"}</span>
+        <p>${state.lang === "en" ? "Territorial presence, local partners and scene curation." : "Presença territorial, parceiros locais e curadoria de cena."}</p>
+        <div class="terr-map-legend">
+          <span><i class="dot-full"></i> ${state.lang === "en" ? "Phase 1 presence" : "Presença fase 1"}</span>
+          <span><i class="dot-open"></i> ${state.lang === "en" ? "Expansion / next hubs" : "Expansão / próximos hubs"}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTerritoryVisual(slide) {
+  switch (slide.visual) {
+    case "thesis-map": {
+      const items = [
+        { area: "Nordeste", genres: "forró, piseiro, arrocha, brega funk, pagodão, axé" },
+        { area: "Norte", genres: "tecnobrega, aparelhagem, pop amazônico" },
+        { area: "Centro-Oeste", genres: "sertanejo, agro pop, gospel regional" },
+        { area: "Sudeste", genres: "funk, trap, rap, pop, pagode" },
+        { area: "Sul", genres: "pop regional, sertanejo, eletrônico, cenas indie" }
+      ];
+      return `
+        <div class="terr-region-list">
+          ${items.map((r, i) => `
+            <article class="terr-region ${i === 0 ? "is-focus" : ""}">
+              <header><span>${terrIcon("scene")}</span><strong>${r.area}</strong>${i === 0 ? `<em>${state.lang === "en" ? "Phase 1" : "Fase 1"}</em>` : ""}</header>
+              <p>${r.genres}</p>
+            </article>
+          `).join("")}
+          <p class="terr-region-note">${state.lang === "en" ? "Brazil is a market of regional scenes — not a single center." : "O Brasil é um mercado de cenas regionais — não um único centro."}</p>
+        </div>
+      `;
+    }
+    case "noise-signal":
+      return `
+        <div class="terr-noise">
+          <div class="terr-noise-cloud" aria-hidden="true">
+            ${Array.from({ length: 42 }).map((_, i) => `<span style="--i:${i}"></span>`).join("")}
+          </div>
+          <div class="terr-noise-arrow">${terrIcon("filter")}</div>
+          <div class="terr-noise-out">
+            <span class="terr-noise-badge">${state.lang === "en" ? "Qualified signal" : "Sinal qualificado"}</span>
+            <strong>${state.lang === "en" ? "Curation > Access" : "Curadoria > Acesso"}</strong>
+          </div>
+          <p class="terr-noise-caption">${state.lang === "en" ? "Millions of uploads. The value is in reading what deserves development." : "Milhões de uploads. O valor está em ler o que merece desenvolvimento."}</p>
+        </div>
+      `;
+    case "comparison": {
+      const cols = [
+        {
+          name: "CD Baby / TuneCore", tone: "muted",
+          tag: { pt: "Varejo digital", en: "Digital retail" },
+          rows: [
+            { pt: "Plataforma aberta / semiaberta", en: "Open / semi-open platform" },
+            { pt: "Artista faz upload", en: "Artist self-uploads" },
+            { pt: "Foco em distribuição digital", en: "Focus on digital distribution" },
+            { pt: "Escala por volume", en: "Scale by volume" }
+          ]
+        },
+        {
+          name: "FUGA", tone: "muted",
+          tag: { pt: "Infraestrutura B2B", en: "B2B infrastructure" },
+          rows: [
+            { pt: "Tecnologia e serviços para empresas", en: "Tech and services for companies" },
+            { pt: "Distribuição e supply chain", en: "Distribution and supply chain" },
+            { pt: "Menos presença cultural", en: "Less cultural presence" },
+            { pt: "Foco operacional", en: "Operational focus" }
+          ]
+        },
+        {
+          name: "FILTR", tone: "accent",
+          tag: { pt: "Presença territorial", en: "Territorial presence" },
+          rows: [
+            { pt: "Entrada por parceiros regionais", en: "Entry through regional partners" },
+            { pt: "Curadoria local e inteligência de cena", en: "Local curation and scene intelligence" },
+            { pt: "Desenvolvimento de carreira", en: "Career development" },
+            { pt: "Oportunidades já filtradas", en: "Pre-filtered opportunities" }
+          ]
+        }
+      ];
+      return `
+        <div class="terr-compare">
+          ${cols.map(col => `
+            <article class="terr-compare-col terr-compare-${col.tone}">
+              <header>
+                <strong>${col.name}</strong>
+                <span>${copy(col.tag)}</span>
+              </header>
+              <ul>
+                ${col.rows.map(r => `<li>${terrIcon(col.tone === "accent" ? "check" : "x")}<span>${copy(r)}</span></li>`).join("")}
+              </ul>
+            </article>
+          `).join("")}
+        </div>
+      `;
+    }
+    case "value-flow": {
+      const steps = [
+        { pt: "Cena local", en: "Local scene", icon: "scene" },
+        { pt: "Parceiro regional", en: "Regional partner", icon: "partner" },
+        { pt: "FILTR", en: "FILTR", icon: "filter" },
+        { pt: "Sony / Som Livre", en: "Sony / Som Livre", icon: "brand" },
+        { pt: "Escala nacional / global", en: "National / global scale", icon: "scale" }
+      ];
+      return `
+        <div class="terr-flow">
+          ${steps.map((s, i) => `
+            <div class="terr-flow-node ${s.en === "FILTR" ? "is-core" : ""}">
+              <span class="terr-flow-icon">${terrIcon(s.icon)}</span>
+              <strong>${copy(s)}</strong>
+            </div>
+            ${i < steps.length - 1 ? `<span class="terr-flow-arrow" aria-hidden="true"></span>` : ""}
+          `).join("")}
+          <p class="terr-flow-caption">${state.lang === "en" ? "Where there is a scene, there is opportunity. Where there is a partner, there is FILTR." : "Onde existe cena, existe oportunidade. Onde existe parceiro, existe FILTR."}</p>
+        </div>
+      `;
+    }
+    case "process": {
+      const steps = [
+        { n: "01", t: { pt: "Radar local", en: "Local radar" }, d: { pt: "Parceiro acompanha cena, artistas, produtores, eventos e movimentos.", en: "Partner tracks the scene, artists, producers, events and movements." } },
+        { n: "02", t: { pt: "Filtro territorial", en: "Territorial filter" }, d: { pt: "Parceiro identifica oportunidades com potencial real.", en: "Partner identifies opportunities with real potential." } },
+        { n: "03", t: { pt: "Qualificação FILTR", en: "FILTR qualification" }, d: { pt: "A FILTR organiza dados, contexto, repertório, público, histórico e oportunidade.", en: "FILTR organizes data, context, repertoire, audience, history and opportunity." } },
+        { n: "04", t: { pt: "Desenvolvimento", en: "Development" }, d: { pt: "Estratégia, marketing, distribuição, conteúdo, collabs, repertório e marcas.", en: "Strategy, marketing, distribution, content, collabs, repertoire and brands." } },
+        { n: "05", t: { pt: "Escala", en: "Scale" }, d: { pt: "Sony Music / Som Livre ampliam alcance, estrutura e crescimento.", en: "Sony Music / Som Livre amplify reach, structure and growth." } }
+      ];
+      return `
+        <ol class="terr-process">
+          ${steps.map(s => `
+            <li>
+              <span class="terr-process-n">${s.n}</span>
+              <div><strong>${copy(s.t)}</strong><p>${copy(s.d)}</p></div>
+            </li>
+          `).join("")}
+        </ol>
+      `;
+    }
+    case "partner": {
+      const roles = [
+        { icon: "radar", t: { pt: "Radar cultural", en: "Cultural radar" } },
+        { icon: "filter", t: { pt: "Curador territorial", en: "Territorial curator" } },
+        { icon: "partner", t: { pt: "Conector de artistas e empresários", en: "Connector of artists and managers" } },
+        { icon: "check", t: { pt: "Validador de contexto", en: "Context validator" } },
+        { icon: "scale", t: { pt: "Ponte cena local → estrutura nacional", en: "Bridge local scene → national structure" } }
+      ];
+      return `
+        <div class="terr-partner">
+          <div class="terr-partner-grid">
+            ${roles.map(r => `<article><span>${terrIcon(r.icon)}</span><strong>${copy(r.t)}</strong></article>`).join("")}
+          </div>
+          <blockquote class="terr-partner-quote">${state.lang === "en" ? "FILTR turns regional partners into radars for A&R, business and development." : "A FILTR transforma parceiros regionais em radares de A&R, negócios e desenvolvimento."}</blockquote>
+        </div>
+      `;
+    }
+    case "layers": {
+      const layers = [
+        { name: "Sony Music", d: { pt: "Estrutura global, marketing, distribuição, dados, repertório, conexões.", en: "Global structure, marketing, distribution, data, repertoire, connections." } },
+        { name: "Som Livre", d: { pt: "Força no Brasil, repertório, cultura popular, audiovisual, histórico nacional.", en: "Strength in Brazil, repertoire, popular culture, audiovisual, national legacy." } },
+        { name: "FILTR", d: { pt: "Presença local, parceiros, curadoria e desenvolvimento territorial.", en: "Local presence, partners, curation and territorial development." }, accent: true }
+      ];
+      return `
+        <div class="terr-layers">
+          ${layers.map(l => `
+            <article class="terr-layer ${l.accent ? "is-accent" : ""}">
+              <strong>${l.name}</strong>
+              <p>${copy(l.d)}</p>
+            </article>
+          `).join("")}
+          <p class="terr-layers-note">${state.lang === "en" ? "FILTR does not replace Sony Music or Som Livre. It connects the group to scenes not yet inside the structure." : "A FILTR não substitui a Sony Music ou a Som Livre. Conecta o grupo às cenas que ainda não estão dentro da estrutura."}</p>
+        </div>
+      `;
+    }
+    case "scenes": {
+      const genres = ["Forró", "Piseiro", "Arrocha", "Brega funk", "Pagodão", "Axé", "Gospel", "Rap / Trap", "Vaquejada", "Paredão", "São João", "Circuitos regionais"];
+      return `
+        <div class="terr-scenes">
+          <div class="terr-scenes-tags">
+            ${genres.map(g => `<span>${g}</span>`).join("")}
+          </div>
+          <ul class="terr-scenes-list">
+            <li>${terrIcon("scene")}<span>${state.lang === "en" ? "Strong scenes and mass parties" : "Cenas fortes e festas de massa"}</span></li>
+            <li>${terrIcon("stage")}<span>${state.lang === "en" ? "Regional show circuits and São João" : "Circuitos regionais de show e São João"}</span></li>
+            <li>${terrIcon("partner")}<span>${state.lang === "en" ? "Producers, songwriters, labels and managers" : "Produtores, compositores, selos e empresários"}</span></li>
+            <li>${terrIcon("spark")}<span>${state.lang === "en" ? "Independent artists with real audiences" : "Artistas independentes com público real"}</span></li>
+          </ul>
+        </div>
+      `;
+    }
+    case "ne-map":
+      return renderTerritoryMap();
+    case "stage": {
+      const activations = ["Palco FILTR São João", "Sessions FILTR Nordeste", "Radar FILTR", "FILTR Collabs", "FILTR Local Heroes", "FILTR Lab", "FILTR na Estrada"];
+      const functions = [
+        { pt: "Vitrine de artistas regionais", en: "Showcase of regional artists" },
+        { pt: "Curadoria e geração de conteúdo", en: "Curation and content generation" },
+        { pt: "Conexão com marcas", en: "Brand connection" },
+        { pt: "Inteligência de público e dados", en: "Audience intelligence and data" },
+        { pt: "Desenvolvimento de carreira ao vivo", en: "Live career development" },
+        { pt: "Prova pública da presença Sony / Som Livre", en: "Public proof of Sony / Som Livre presence" }
+      ];
+      return `
+        <div class="terr-stage">
+          <div class="terr-stage-hero">
+            <span class="terr-stage-kicker">${terrIcon("stage")} Palco FILTR · São João</span>
+            <strong>${state.lang === "en" ? "Presence where the audience already is." : "Presença onde o público já está."}</strong>
+          </div>
+          <ul class="terr-stage-functions">
+            ${functions.map(f => `<li>${terrIcon("check")}<span>${copy(f)}</span></li>`).join("")}
+          </ul>
+          <div class="terr-stage-tags">
+            ${activations.map(a => `<span>${a}</span>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+    case "roadmap": {
+      const phases = [
+        { n: "Fase 1", t: { pt: "Nordeste", en: "Northeast" }, d: { pt: "Prova de conceito, parceiros, mapa, palcos, curadoria e primeiros cases.", en: "Proof of concept, partners, map, stages, curation and first cases." }, active: true },
+        { n: "Fase 2", t: { pt: "Norte + Centro-Oeste", en: "North + Midwest" }, d: { pt: "Expansão para novas cenas e mercados regionais.", en: "Expansion into new scenes and regional markets." } },
+        { n: "Fase 3", t: { pt: "Sul + interior do Sudeste", en: "South + Southeast interior" }, d: { pt: "Consolidação nacional fora dos grandes centros.", en: "National consolidation beyond the major centers." } },
+        { n: "Fase 4", t: { pt: "Brasil conectado", en: "Connected Brazil" }, d: { pt: "Rede nacional de inteligência musical territorial.", en: "National network of territorial music intelligence." } }
+      ];
+      return `
+        <ol class="terr-roadmap">
+          ${phases.map(p => `
+            <li class="${p.active ? "is-active" : ""}">
+              <span class="terr-roadmap-dot"></span>
+              <div>
+                <span class="terr-roadmap-phase">${p.n}${p.active ? ` · ${state.lang === "en" ? "Now" : "Agora"}` : ""}</span>
+                <strong>${copy(p.t)}</strong>
+                <p>${copy(p.d)}</p>
+              </div>
+            </li>
+          `).join("")}
+        </ol>
+      `;
+    }
+    case "value": {
+      const items = [
+        { icon: "scale", t: { pt: "Capilaridade nacional", en: "National reach" } },
+        { icon: "filter", t: { pt: "Pipeline qualificado de artistas e projetos", en: "Qualified pipeline of artists and projects" } },
+        { icon: "radar", t: { pt: "Inteligência de cena local", en: "Local scene intelligence" } },
+        { icon: "partner", t: { pt: "Relação com parceiros regionais", en: "Relationship with regional partners" } },
+        { icon: "spark", t: { pt: "Desenvolvimento de carreira com contexto", en: "Career development with context" } },
+        { icon: "territory", t: { pt: "Entrada em mercados sub-representados", en: "Entry into under-represented markets" } },
+        { icon: "stage", t: { pt: "Conteúdo e ativações territoriais", en: "Territorial content and activations" } },
+        { icon: "data", t: { pt: "Fortalecimento da presença Sony / Som Livre", en: "Stronger Sony / Som Livre presence" } }
+      ];
+      return `
+        <div class="terr-value-grid">
+          ${items.map(i => `<article><span>${terrIcon(i.icon)}</span><strong>${copy(i.t)}</strong></article>`).join("")}
+        </div>
+      `;
+    }
+    case "vision":
+      return `
+        <div class="terr-vision">
+          <div class="terr-vision-statement">
+            <span>${state.lang === "en" ? "From RJ–SP axis" : "Do eixo RJ–SP"}</span>
+            <em>${terrIcon("scale")}</em>
+            <strong>${state.lang === "en" ? "to operating Brazil from its musical territories" : "a operar o Brasil a partir dos seus territórios musicais"}</strong>
+          </div>
+          <p class="terr-vision-note">${state.lang === "en" ? "The first phase is the Northeast. The vision is Brazil." : "A primeira fase é Nordeste. A visão é Brasil."}</p>
+        </div>
+      `;
+    case "closing":
+      return `
+        <div class="terr-closing">
+          <div class="terr-closing-mark">${terrIcon("territory")}</div>
+          <strong class="terr-closing-line">${state.lang === "en" ? "Where the scene meets scale." : "Onde a cena encontra escala."}</strong>
+          <div class="terr-closing-flow">
+            <span>${state.lang === "en" ? "Northeast" : "Nordeste"}</span>
+            <i></i>
+            <span>${state.lang === "en" ? "Brazil" : "Brasil"}</span>
+            <i></i>
+            <span>Sony / Som Livre</span>
+          </div>
+        </div>
+      `;
+    default:
+      return "";
+  }
+}
+
+function renderTerritorySources() {
+  const sources = [
+    "Pro-Música Brasil", "IFPI", "IBGE", "Ministério do Turismo", "ECAD",
+    "CD Baby / TuneCore / FUGA", "Sony Music Brasil", "Som Livre"
+  ];
+  const placeholders = [
+    { pt: "[Inserir dado validado: crescimento do mercado brasileiro de música]", en: "[Insert validated data: Brazilian music market growth]" },
+    { pt: "[Inserir dado validado: participação do streaming no mercado brasileiro]", en: "[Insert validated data: streaming share of the Brazilian market]" },
+    { pt: "[Inserir dado validado: impacto econômico do São João]", en: "[Insert validated data: São João economic impact]" }
+  ];
+  return `
+    <div class="terr-sources">
+      <span class="section-kicker">${state.lang === "en" ? "Suggested sources for validation" : "Fontes sugeridas para validação"}</span>
+      <div class="terr-sources-tags">${sources.map(s => `<span>${s}</span>`).join("")}</div>
+      <ul class="terr-sources-placeholders">
+        ${placeholders.map(p => `<li>${copy(p)}</li>`).join("")}
+      </ul>
+    </div>
+  `;
+}
+
+function renderTerritoryCover(slide) {
+  return `
+    <section class="terr-cover" aria-label="${copy(slide.kicker)}">
+      <div class="terr-cover-bg" aria-hidden="true">
+        ${renderTerritoryMap()}
+      </div>
+      <div class="terr-cover-content">
+        <div class="terr-cover-badge">${terrIcon("territory")}<span>${copy(slide.kicker)}</span></div>
+        <img class="terr-cover-logo" src="assets/pitch/filtr-logo.png" alt="FILTR" />
+        <h1>${copy(slide.title)}</h1>
+        <p>${copy(slide.subtitle)}</p>
+        <blockquote>${copy(slide.quote)}</blockquote>
+        <div class="terr-cover-partners">
+          <img src="assets/pitch/sony-music-logo.png" alt="Sony Music" />
+          <img src="assets/pitch/som-livre-logo.png" alt="Som Livre" />
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderTerritoryDeck() {
+  const index = territoryIndexFromRoute();
+  const slide = data.territorySlides[index - 1];
+  const prev = Math.max(index - 1, 1);
+  const next = Math.min(index + 1, data.territorySlides.length);
+  const progress = Math.round((index / data.territorySlides.length) * 100);
+  if (slide.visual === "cover") {
+    return shell(`
+      <main class="pitch-deck terr-deck terr-deck-opening">
+        ${renderTerritoryCover(slide)}
+        <div class="pitch-opening-controls terr-opening-controls">
+          <a class="button primary" href="#/territorio/${next}">${state.lang === "en" ? "Next" : "Próximo"}</a>
+        </div>
+        <div class="pitch-progress terr-progress" aria-label="Progresso da apresentação"><span style="width:${progress}%"></span></div>
+        <nav class="pitch-dots terr-dots" aria-label="Slides">
+          ${data.territorySlides.map((_, i) => `<a class="${i + 1 === index ? "active" : ""}" href="#/territorio/${i + 1}">${i + 1}</a>`).join("")}
+        </nav>
+      </main>
+    `);
+  }
+  const isClosing = slide.visual === "closing";
+  return shell(`
+    <main class="pitch-deck terr-deck">
+      <section class="pitch-slide terr-slide ${isClosing ? "terr-slide-closing" : ""}">
+        <div class="pitch-copy terr-copy">
+          <span class="section-kicker">${copy(slide.kicker)} · ${index}/${data.territorySlides.length}</span>
+          <h1>${copy(slide.title)}</h1>
+          ${slide.subtitle ? `<p class="pitch-subtitle">${copy(slide.subtitle)}</p>` : ""}
+          ${slide.body ? `<p>${copy(slide.body)}</p>` : ""}
+          ${slide.quote ? `<blockquote class="pitch-impact terr-impact">${copy(slide.quote)}</blockquote>` : ""}
+          ${isClosing ? renderTerritorySources() : ""}
+          <div class="pitch-controls">
+            <a class="button secondary ${index === 1 ? "disabled" : ""}" href="#/territorio/${prev}">${state.lang === "en" ? "Previous" : "Anterior"}</a>
+            ${index === data.territorySlides.length
+              ? `
+                <a class="button primary" href="#/">${copy(slide.cta)}</a>
+                <a class="button secondary" href="#/territorio/1">${copy(slide.secondaryCta)}</a>
+              `
+              : `<a class="button primary" href="#/territorio/${next}">${state.lang === "en" ? "Next" : "Próximo"}</a>`}
+          </div>
+        </div>
+        <div class="pitch-visual terr-visual terr-visual-${slide.visual}">
+          ${renderTerritoryVisual(slide)}
+        </div>
+      </section>
+      <div class="pitch-progress terr-progress" aria-label="Progresso da apresentação"><span style="width:${progress}%"></span></div>
+      <nav class="pitch-dots terr-dots" aria-label="Slides">
+        ${data.territorySlides.map((_, i) => `<a class="${i + 1 === index ? "active" : ""}" href="#/territorio/${i + 1}">${i + 1}</a>`).join("")}
+      </nav>
+    </main>
+  `);
+}
+
 function experienceModuleFromRoute() {
   const id = routePath().split("/experience/")[1] || "dashboard";
   return data.experienceModules.find(module => module.id === id) || data.experienceModules[0];
@@ -3380,6 +3833,8 @@ function render() {
     ? { render: renderPitchDeck }
     : path.startsWith("/tech")
       ? { render: renderTechDeck }
+    : path.startsWith("/territorio")
+      ? { render: renderTerritoryDeck }
     : routes.find(item => item.path === path) || (path.startsWith("/noticias/") ? { render: renderNews } : routes[0]);
   document.documentElement.lang = state.lang === "en" ? "en" : "pt-BR";
   app.innerHTML = route.render();
@@ -3504,14 +3959,15 @@ window.addEventListener("keydown", event => {
   const path = routePath();
   const isPitch = path.startsWith("/pitch");
   const isTech = path.startsWith("/tech");
-  if (!isPitch && !isTech) return;
+  const isTerr = path.startsWith("/territorio");
+  if (!isPitch && !isTech && !isTerr) return;
   const activeElement = document.activeElement;
   const isTyping = activeElement && ["INPUT", "TEXTAREA", "SELECT"].includes(activeElement.tagName);
   if (isTyping || event.metaKey || event.ctrlKey || event.altKey) return;
 
-  const index = isPitch ? pitchIndexFromRoute() : techIndexFromRoute();
-  const total = isPitch ? data.pitchSlides.length : data.techSlides.length;
-  const basePath = isPitch ? "/pitch" : "/tech";
+  const index = isPitch ? pitchIndexFromRoute() : isTech ? techIndexFromRoute() : territoryIndexFromRoute();
+  const total = isPitch ? data.pitchSlides.length : isTech ? data.techSlides.length : data.territorySlides.length;
+  const basePath = isPitch ? "/pitch" : isTech ? "/tech" : "/territorio";
   if (event.key === "ArrowRight" || event.key === "PageDown") {
     event.preventDefault();
     go(index === total ? "/" : `${basePath}/${index + 1}`);

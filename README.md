@@ -122,6 +122,7 @@ Como é uma aplicação estática, as rotas usam hash:
 
 - `#/` — Portal
 - `#/pitch/1` a `#/pitch/16` — Pitch navegável FILTR Experience
+- `#/territorio/1` a `#/territorio/15` — Pitch executivo de Presença Territorial (Nordeste → Brasil) para Sony Music / Som Livre
 - `#/experience` — Simulação navegável FILTR Experience
 - `#/experience/ar-radar` — Exemplo de módulo da simulação
 - `#/noticias` — Notícias
