@@ -2471,7 +2471,7 @@ function renderTerritoryMap() {
   };
   return `
     <div class="terr-map-wrap">
-      <svg class="terr-map" viewBox="0 0 680 505" role="img" aria-label="${state.lang === "en" ? "Strategic map of FILTR presence in the Northeast" : "Mapa estratégico de presença FILTR no Nordeste"}">
+      <svg class="terr-map" viewBox="-16 -10 720 525" role="img" aria-label="${state.lang === "en" ? "Strategic map of FILTR presence in the Northeast" : "Mapa estratégico de presença FILTR no Nordeste"}">
         <defs>
           <radialGradient id="terrLand" cx="42%" cy="36%" r="78%">
             <stop offset="0%" stop-color="rgba(255,138,0,0.20)" />
